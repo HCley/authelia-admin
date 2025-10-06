@@ -1,14 +1,15 @@
 import type { Handle } from '@sveltejs/kit';
 
-const AUTHELIA_DOMAIN = process.env.AUTHELIA_DOMAIN || 'auth.localhost.test';
 const ALLOWED_USERS = process.env.ALLOWED_USERS ? process.env.ALLOWED_USERS.split(',') : ['admin'];
+const AUTHELIA_COOKIE_SESSION = process.env.AUTHELIA_COOKIE_SESSION || 'authelia_session';
+const AUTHELIA_DOMAIN = process.env.AUTHELIA_DOMAIN || 'auth.localhost.test';
 
 export const handle: Handle = async ({ event, resolve }) => {
 	if (event.url.pathname === '/auth-admin/health') {
 		return resolve(event);
 	}
 
-	const authSessionCookie = event.cookies.get('authelia_session');
+	const authSessionCookie = event.cookies.get(`${AUTHELIA_COOKIE_SESSION}`);
 		event.locals.user = undefined;	
 	if (!authSessionCookie) {
 		// No cookie - return 403 for all non-health endpoints
